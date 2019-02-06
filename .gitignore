@@ -1,0 +1,32 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Aplikasi 360 #
+# dependencies
+react-antd-rewired-boilerplate-master/node_modules
+react-antd-rewired-boilerplate-master/.pnp
+react-antd-rewired-boilerplate-master/.pnp.js
+
+# testing
+react-antd-rewired-boilerplate-master/coverage
+
+# production
+react-antd-rewired-boilerplate-master/build
+
+# misc
+react-antd-rewired-boilerplate-master/.DS_Store
+react-antd-rewired-boilerplate-master/.env.local
+react-antd-rewired-boilerplate-master/.env.development.local
+react-antd-rewired-boilerplate-master/.env.test.local
+react-antd-rewired-boilerplate-master/.env.production.local
+
+react-antd-rewired-boilerplate-master/npm-debug.log*
+react-antd-rewired-boilerplate-master/yarn-debug.log*
+react-antd-rewired-boilerplate-master/yarn-error.log*
+
+# =========================================
+
+# ===================================
+# SERVER
+server/node_modules
+
+# ===================================
