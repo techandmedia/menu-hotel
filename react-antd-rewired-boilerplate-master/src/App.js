@@ -1,36 +1,51 @@
 import React, { Component } from "react";
 import MainLayout from "./layout/Layout";
 import Header from "./layout/Header";
+import Sider from "./layout/Sider";
+
+import SignIn from "./login/Signin";
+import OperatorDashboard from "./dashboard/OperatorDashboard";
 import "./App.css";
+import Config from "./Fetch/ConfigData";
+
+const URL =
+  process.env.NODE_ENV === "production" ? Config.prodURL : Config.devURL;
 
 class App extends Component {
   state = {
-    siderStatus: "header"
+    siderStatus: "header",
+    headerHide: true,
+    siderHide: true,
+    route: "operator-dashboard",
+    currentUser: null,
+    isSignedIn: false
   };
 
-  // Ini fungsi supaya pada saat lebar layar kurang dari 415px
-  // dan tombol collapsed nya ditekan, maka title{display: none}
-  onSiderChange = event => {
-    const screenWidth = window.innerWidth;
-    if (!event && screenWidth < 415) {
-      this.setState({
-        siderStatus: "smaller-header"
-      });
-    } else {
-      this.setState({
-        siderStatus: "header"
-      });
+  onRouteChange = route => {
+    if (route === "login") {
+      this.setState({ route });
+    } else if (route === "operator-dashboard") {
+      this.setState({ route: route, isSignedIn: true, currentUser: "Andri" });
     }
+    this.setState({ route });
   };
 
   render() {
-    const { siderStatus } = this.state;
+    const { siderStatus, route, isSignedIn } = this.state;
+
     return (
       <MainLayout
         onSiderChange={this.onSiderChange}
-        header={<Header siderStatus={siderStatus} />}
+        headerHide={this.state.headerHide}
+        siderHide={this.state.siderHide}
+        sider={<Sider siderStatus={siderStatus} />}
+        header={<Header siderStatus={siderStatus} isSignedIn={isSignedIn} />}
       >
-        Testing
+        {route === "login" ? (
+          <SignIn URL={URL} onRouteChange={this.onRouteChange} />
+        ) : route === "operator-dashboard" ? (
+          <OperatorDashboard URL={URL}/>
+        ) : null}
       </MainLayout>
     );
   }

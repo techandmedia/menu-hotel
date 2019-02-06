@@ -5,15 +5,7 @@ const connectionMySQL = mysql.createConnection({
   port: '3306',
   user: 'root',
   password: '123',
-  database: 'db_kuesioner'
+  database: 'dv259321_inventory'
 });
-
-// const connectionMySQL = mysql.createConnection({
-//   host: 'localhost',
-//   port: '3306',
-//   user: 'andri',
-//   password: '123',
-//   database: 'dv259321_inventory'
-// });
 
 module.exports = connectionMySQL;
