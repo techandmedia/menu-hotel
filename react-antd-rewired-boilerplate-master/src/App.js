@@ -16,7 +16,7 @@ class App extends Component {
     siderStatus: "header",
     headerHide: true,
     siderHide: true,
-    route: "login",
+    route: "operator-dashboard",
     currentUser: null,
     isSignedIn: false
   };
