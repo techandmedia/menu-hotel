@@ -1,3 +1,12 @@
+html,
+body {
+  line-height: 1;
+}
+
+.ant-form {
+  line-height: 0;
+}
+
 .header {
   text-align: center;
   line-height: 0.3;
@@ -15,4 +24,75 @@
 
 .sub-title {
   font-size: 16px;
+}
+
+.code-box {
+  border: 1px solid #ebedf0;
+  padding: 15px 5px;
+  line-height: 1.2;
+  margin-top: -20px;
+  margin-bottom: -20px;
+  border-radius: 2px;
+  display: inline-block;
+  width: 100%;
+  position: relative;
+  margin: 0 0 16px;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+.code-box-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: orangered;
+  position: absolute;
+  top: -14px;
+  padding: 1px 8px;
+  margin-left: 250px;
+  border-radius: 2px 2px 0 0;
+  background: #fff;
+  -webkit-transition: background-color 0.4s;
+  transition: background-color 0.4s;
+}
+
+.ant-btn {
+  padding: 0 10px;
+}
+
+.ant-form-item {
+  line-height: 1.5;
+  margin-bottom: 0px;
+}
+
+.ant-form-item-label {
+  line-height: 29.9999px;
+}
+
+.ant-form-item-control {
+  line-height: 9.9999px;
+}
+
+.resno {
+  margin-bottom: 20px;
+}
+
+.day-date {
+  margin-top: -30px;
+  margin-left: 90px;
+  /* border: 1px solid red; */
+  padding: 10px 5px;
+  border-radius: 2px;
+  /* display: inline-block; */
+}
+
+.departure {
+  margin-top: 30px!;
+}
+
+.checkbox {
+  margin-top: 8px;
+}
+
+.fixed{
+  margin-top: 8px;
 }

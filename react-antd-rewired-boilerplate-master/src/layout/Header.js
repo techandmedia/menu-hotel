@@ -1,13 +1,24 @@
 import React from "react";
 import { Menu, Icon } from "antd";
 
-export default function PageHeader({ siderStatus, isSignedIn }) {
+export default function PageHeader({ isSignedIn, onRouteChange }) {
+  function handleClick(e) {
+    // console.log("click ", e);
+    if (e.key === "1") {
+      onRouteChange("login");
+    } else if (e.key === "register") {
+      onRouteChange("register");
+    } else {
+      return null;
+    }
+  }
+
   return (
     <div className="logo">
       <Menu
         theme="dark"
         // mode="inline"
-        // onClick={this.handleClick}
+        onClick={handleClick}
         // selectedKeys={[this.state.current]}
         mode="horizontal"
       >

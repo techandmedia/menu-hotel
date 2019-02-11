@@ -16,7 +16,7 @@ class App extends Component {
     siderStatus: "header",
     headerHide: true,
     siderHide: true,
-    route: "operator-dashboard",
+    route: "login",
     currentUser: null,
     isSignedIn: false
   };
@@ -32,6 +32,7 @@ class App extends Component {
 
   render() {
     const { siderStatus, route, isSignedIn } = this.state;
+    const { onRouteChange } = this;
 
     return (
       <MainLayout
@@ -39,12 +40,18 @@ class App extends Component {
         headerHide={this.state.headerHide}
         siderHide={this.state.siderHide}
         sider={<Sider siderStatus={siderStatus} />}
-        header={<Header siderStatus={siderStatus} isSignedIn={isSignedIn} />}
+        header={
+          <Header
+            siderStatus={siderStatus}
+            isSignedIn={isSignedIn}
+            onRouteChange={onRouteChange}
+          />
+        }
       >
         {route === "login" ? (
           <SignIn URL={URL} onRouteChange={this.onRouteChange} />
         ) : route === "operator-dashboard" ? (
-          <OperatorDashboard URL={URL}/>
+          <OperatorDashboard URL={URL} />
         ) : null}
       </MainLayout>
     );

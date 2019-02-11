@@ -6,7 +6,7 @@ const { Header, Content, Footer, Sider } = Layout;
 export default function MainLayout(props) {
   console.log(props);
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout>
       {!props.siderHide && (
         <Sider
           breakpoint="lg"
@@ -33,14 +33,13 @@ export default function MainLayout(props) {
             style={{
               padding: 24,
               background: "#fff",
-              minHeight: 460,
+              // minHeight: 460,
               overflow: "initial"
             }}
           >
             {props.children}
           </div>
         </Content>
-
         <Footer style={{ textAlign: "center" }}>
           <a
             href="https://subarnanto.com"

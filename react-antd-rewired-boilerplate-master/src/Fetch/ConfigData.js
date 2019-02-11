@@ -1,5 +1,5 @@
 const config = {
-  prodURL: "https://app.subarnanto.com/",
+  prodURL: "https://menu-hotel.subarnanto.com/",
   devURL: "http://localhost:5001/"
 };
 

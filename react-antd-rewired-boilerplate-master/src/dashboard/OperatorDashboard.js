@@ -1,7 +1,12 @@
 import React from "react";
-import { Table, Button } from "antd";
+import { Table, Button, Row, Col, Card, Radio } from "antd";
+import moment from "../Fetch/moment";
+
+import FormResNumber from "../form/FormResNumber";
 
 import { getReservation } from "../Fetch/GetData";
+
+const RadioGroup = Radio.Group;
 
 class OperatorDashboard extends React.Component {
   state = {
@@ -12,7 +17,13 @@ class OperatorDashboard extends React.Component {
     len: null,
     // detail: {
     nights: 0,
-    quantity: 0
+    quantity: 0,
+    formReservasi: false,
+    reservation_number: null,
+    value: null,
+    departToday: false,
+    departTable: [],
+    dateToday: moment()
     // }
   };
 
@@ -28,6 +39,7 @@ class OperatorDashboard extends React.Component {
         len: this.state.dataReservation.length
       });
       this.getQuantity();
+      this.getDepartToday();
     }
   }
 
@@ -37,6 +49,20 @@ class OperatorDashboard extends React.Component {
         dataReservation: data
       });
     });
+  };
+
+  getDepartToday = () => {
+    const { dataReservation, dateToday, departTable } = this.state;
+    for (let i = 0; i < dataReservation.length; i++) {
+      const dateTodayNow = moment(dataReservation[i].arrival_date).format(
+        "DD/MM/YY"
+      );
+      // console.log(dateTodayNow);
+      if (moment(dateToday).format("DD/MM/YY") === dateTodayNow) {
+        // this.setState({ departTable: dataReservation[i] });
+        departTable.push(dataReservation[i]);
+      }
+    }
   };
 
   getQuantity = () => {
@@ -57,103 +83,63 @@ class OperatorDashboard extends React.Component {
     });
   };
 
-  clearFilters = () => {
-    this.setState({ filteredInfo: null });
-  };
-
-  clearAll = () => {
+  onFormNumberClick = (e, rn) => {
+    // console.log(rn);
     this.setState({
-      filteredInfo: null,
-      sortedInfo: null
+      tabelUtama: false,
+      formReservasi: true,
+      reservation_number: rn,
+      departToday: false
     });
   };
 
-  setAgeSort = () => {
-    this.setState({
-      sortedInfo: {
-        order: "descend",
-        columnKey: "age"
-      }
-    });
-  };
-
-  getDetail = nip_nim => {
-    let lenDetail = this.state.dataDetail.length;
-    let lenTotal = this.state.dataTotal.length;
-
-    // Can't clear state with this
-    // this.setState({ dataDetail: [] });
-
-    for (let i = 0; i < lenTotal; i++) {
-      if (nip_nim === this.state.dataTotal[i].nip_nim) {
-        // This will always replace array[0] with new one
-        this.state.dataDetail.splice(0, lenDetail);
-
-        // This keeps adding item to array, that's ok because
-        // We can reset it 0 by removing element as the above splice
-        this.state.dataDetail.push(this.state.dataTotal[i]);
-
-        // This produces error
-        // this.setState({
-        //   dataDetail: this.state.dataTotal[i]
-        // });
-      }
-    }
-  };
-
-  getSawDetail = nip_nim => {
-    let lenSawDetail = this.state.dataSawDetail.length;
-    let lenTotal = this.state.dataTotal.length;
-
-    for (let i = 0; i < lenTotal; i++) {
-      if (nip_nim === this.state.dataTotal[i].nip_nim) {
-        this.state.dataSawDetail.splice(0, lenSawDetail);
-        this.state.dataSawDetail.push(this.state.dataTotal[i]);
-      }
-    }
-  };
-
-  onChangeSaw = (nip_nim, record) => {
-    if (record) {
-      this.getSawDetail(nip_nim);
-      this.setState({
-        tabelUtama: false,
-        tabelSaw: true
-      });
-    } else if (!record) {
-      this.setState({
-        tabelUtama: true
-      });
-    }
-  };
-
-  onChangeThreeSixty = (nip_nim, record) => {
-    if (record) {
-      this.getDetail(nip_nim);
-      this.setState({
-        tabelUtama: false,
-        tabel360: true
-      });
-    } else if (!record) {
-      this.setState({
-        tabelUtama: true
-      });
-    }
-  };
-
-  onResetTable = () => {
+  onBackToMenu = () => {
     this.setState({
       tabelUtama: true,
-      tabelSaw: false,
-      tabel360: false
+      formReservasi: false
     });
+  };
+
+  onChange = e => {
+    const radio = e.target.value;
+    this.setState({
+      value: radio
+    });
+    if (radio === 1) {
+      console.log(radio);
+      this.setState({
+        departToday: false,
+        tabelUtama: true,
+        formReservasi: false
+      });
+    } else if (radio === 2) {
+      console.log(radio);
+    } else if (radio === 3) {
+      console.log(radio);
+    } else if (radio === 4) {
+      console.log(radio);
+      this.setState({
+        departToday: true,
+        tabelUtama: false,
+        formReservasi: false
+      });
+    }
   };
 
   render() {
-    const { dataReservation, tabelUtama, len, detail } = this.state;
-    // const len = dataReservation.length
-    // console.log(len);
-    console.log(this.state.nights, this.state.quantity);
+    const {
+      dataReservation,
+      tabelUtama,
+      len,
+      formReservasi,
+      reservation_number,
+      departToday,
+      departTable
+    } = this.state;
+
+    console.log(dataReservation);
+
+    const { URL } = this.props;
 
     let { sortedInfo } = this.state;
 
@@ -166,7 +152,15 @@ class OperatorDashboard extends React.Component {
         key: "reservation_number",
         sorter: (a, b) => a.reservation_number - b.reservation_number,
         sortOrder:
-          sortedInfo.columnKey === "reservation_number" && sortedInfo.order
+          sortedInfo.columnKey === "reservation_number" && sortedInfo.order,
+        render: (text, record) => (
+          <span
+            style={{ cursor: "pointer" }}
+            onClick={e => this.onFormNumberClick(e, record.reservation_number)}
+          >
+            {record.reservation_number}
+          </span>
+        )
       },
       {
         title: "Reserve Name",
@@ -188,13 +182,17 @@ class OperatorDashboard extends React.Component {
         title: "Arrival",
         dataIndex: "arrival_date",
         key: "arrival_date",
-        render: (text, record) => <span>{record.arrival_date}</span>
+        render: (text, record) => (
+          <span>{moment(record.arrival_date).format("DD/MM/YY")}</span>
+        )
       },
       {
         title: "Depart",
         dataIndex: "depart_date",
         key: "depart_date",
-        render: (text, record) => <span>{record.depart_date}</span>
+        render: (text, record) => (
+          <span>{moment(record.depart_date).format("DD/MM/YY")}</span>
+        )
       },
       {
         title: "Category",
@@ -218,154 +216,23 @@ class OperatorDashboard extends React.Component {
       }
     ];
 
-    const columnDetail = [
-      {
-        title: "NIP/NIM",
-        dataIndex: "nip_nim",
-        key: "nip_nim",
-        sorter: (a, b) => a.nip_nim.length - b.nip_nim.length,
-        sortOrder: sortedInfo.columnKey === "nip_nim" && sortedInfo.order
-      },
-      {
-        title: "Nama",
-        dataIndex: "name",
-        key: "name",
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortOrder: sortedInfo.columnKey === "name" && sortedInfo.order,
-        render: (text, record) => (
-          <span
-            onClick={this.onChangeThreeSixty.bind(this, record.nip_nim, true)}
-          >
-            {record.name}
-          </span>
-        )
-      },
-      {
-        title: "Nilai P1",
-        dataIndex: "p1",
-        key: "p1",
-        sorter: (a, b) => a.p1 - b.p1,
-        sortOrder: sortedInfo.columnKey === "p1" && sortedInfo.order
-      },
-      {
-        title: "Nilai P2",
-        dataIndex: "p2",
-        key: "p2",
-        sorter: (a, b) => a.p2 - b.p2,
-        sortOrder: sortedInfo.columnKey === "p2" && sortedInfo.order
-      },
-      {
-        title: "Nilai P3",
-        dataIndex: "p3",
-        key: "p3",
-        sorter: (a, b) => a.p3 - b.p3,
-        sortOrder: sortedInfo.columnKey === "p3" && sortedInfo.order
-      },
-      {
-        title: "Nilai P4",
-        dataIndex: "p4",
-        key: "p4",
-        sorter: (a, b) => a.p4 - b.p4,
-        sortOrder: sortedInfo.columnKey === "p4" && sortedInfo.order
-      },
-      {
-        title: "Total Nilai P",
-        dataIndex: "total",
-        key: "total",
-        sorter: (a, b) => a.total - b.total,
-        sortOrder: sortedInfo.columnKey === "total" && sortedInfo.order
-      }
-    ];
-
-    const columnSaw = [
-      {
-        title: "NIP/NIM",
-        dataIndex: "nip_nim",
-        key: "nip_nim",
-        sorter: (a, b) => a.nip_nim.length - b.nip_nim.length,
-        sortOrder: sortedInfo.columnKey === "nip_nim" && sortedInfo.order
-      },
-      {
-        title: "Nama",
-        dataIndex: "name",
-        key: "name",
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortOrder: sortedInfo.columnKey === "name" && sortedInfo.order,
-        render: (text, record) => (
-          <span onClick={this.onChangeSaw.bind(this, record.nip_nim, true)}>
-            {record.name}
-          </span>
-        )
-      },
-      {
-        title: "Ranking",
-        dataIndex: "ranking",
-        key: "ranking",
-        sorter: (a, b) => a.ranking - b.ranking,
-        sortOrder: sortedInfo.columnKey === "ranking" && sortedInfo.order
-      },
-      {
-        title: "Nilai C1",
-        dataIndex: "c1",
-        key: "c1",
-        sorter: (a, b) => a.c1 - b.c1,
-        sortOrder: sortedInfo.columnKey === "c1" && sortedInfo.order
-      },
-      {
-        title: "Nilai C2",
-        dataIndex: "c2",
-        key: "c2",
-        sorter: (a, b) => a.c2 - b.c2,
-        sortOrder: sortedInfo.columnKey === "c2" && sortedInfo.order
-      },
-      {
-        title: "Nilai C3",
-        dataIndex: "c3",
-        key: "c3",
-        sorter: (a, b) => a.c3 - b.c3,
-        sortOrder: sortedInfo.columnKey === "c3" && sortedInfo.order
-      },
-      {
-        title: "Nilai C4",
-        dataIndex: "c4",
-        key: "c4",
-        sorter: (a, b) => a.c4 - b.c4,
-        sortOrder: sortedInfo.columnKey === "c4" && sortedInfo.order
-      },
-      {
-        title: "Nilai C5",
-        dataIndex: "c5",
-        key: "c5",
-        sorter: (a, b) => a.c5 - b.c5,
-        sortOrder: sortedInfo.columnKey === "c5" && sortedInfo.order
-      },
-      {
-        title: "Nilai C6",
-        dataIndex: "c6",
-        key: "c6",
-        sorter: (a, b) => a.c6 - b.c6,
-        sortOrder: sortedInfo.columnKey === "c6" && sortedInfo.order
-      },
-      {
-        title: "Nilai C7",
-        dataIndex: "c7",
-        key: "c7",
-        sorter: (a, b) => a.c7 - b.c7,
-        sortOrder: sortedInfo.columnKey === "c7" && sortedInfo.order
-      },
-      {
-        title: "Total Nilai C",
-        dataIndex: "totalSaw",
-        key: "totalSaw",
-        sorter: (a, b) => a.totalSaw - b.totalSaw,
-        sortOrder: sortedInfo.columnKey === "totalSaw" && sortedInfo.order
-      }
-    ];
+    const radioStyle = {
+      display: "block",
+      height: "30px",
+      lineHeight: "30px"
+    };
 
     return (
       <div>
         <div className="table-operations" />
-        <h1>Operator Dashboard</h1>
+        <h1>
+          Operator Dashboard{" "}
+          {formReservasi && (
+            <Button onClick={this.onBackToMenu} style={{ marginLeft: 10 }}>
+              Kembali ke Menu Reservasi
+            </Button>
+          )}
+        </h1>
         {(() => {
           if (tabelUtama) {
             return (
@@ -380,47 +247,109 @@ class OperatorDashboard extends React.Component {
                 />
                 <p>
                   Total: Room: {len}{" "}
-                  <span style={{marginLeft: 10}}>Total Nights: {this.state.nights}</span>
-                  <span style={{marginLeft: 10}}>Total Quantity: {this.state.quantity}</span>
+                  <span style={{ marginLeft: 10 }}>
+                    Total Nights: {this.state.nights}
+                  </span>
+                  <span style={{ marginLeft: 10 }}>
+                    Total Quantity: {this.state.quantity}
+                  </span>
                 </p>
+                <div style={{ background: "#ECECEC", padding: "30px" }}>
+                  <Row gutter={16}>
+                    <Col span={8}>
+                      <Card title="Display Options" bordered={false}>
+                        <RadioGroup
+                          onChange={this.onChange}
+                          value={this.state.value}
+                        >
+                          <Radio style={radioStyle} value={1}>
+                            Reservations
+                          </Radio>
+                          <Radio style={radioStyle} value={2}>
+                            Resident
+                          </Radio>
+                          <Radio style={radioStyle} value={3}>
+                            Arrival - Today
+                          </Radio>
+                          <Radio style={radioStyle} value={4}>
+                            Depart - Today
+                          </Radio>
+                        </RadioGroup>
+                      </Card>
+                    </Col>
+                    <Col span={8}>
+                      <Card title="Main Reservation" bordered={false}>
+                        Card content
+                      </Card>
+                    </Col>
+                  </Row>
+                </div>
               </React.Fragment>
             );
+          } else if (departToday) {
+            return (
+              <React.Fragment>
+                <Table
+                  columns={columns}
+                  dataSource={departTable}
+                  onChange={this.handleChange}
+                  // Warning: Each record in table should have a unique `key` prop,
+                  // or set `rowKey` to an unique primary key.
+                  rowKey="reservation_number" //to prevent error above
+                />
+                <p>
+                  Total: Room: {len}{" "}
+                  <span style={{ marginLeft: 10 }}>
+                    Total Nights: {this.state.nights}
+                  </span>
+                  <span style={{ marginLeft: 10 }}>
+                    Total Quantity: {this.state.quantity}
+                  </span>
+                </p>
+                <div style={{ background: "#ECECEC", padding: "30px" }}>
+                  <Row gutter={16}>
+                    <Col span={8}>
+                      <Card title="Display Options" bordered={false}>
+                        <RadioGroup
+                          onChange={this.onChange}
+                          value={this.state.value}
+                        >
+                          <Radio style={radioStyle} value={1}>
+                            Reservations
+                          </Radio>
+                          <Radio style={radioStyle} value={2}>
+                            Resident
+                          </Radio>
+                          <Radio style={radioStyle} value={3}>
+                            Arrival - Today
+                          </Radio>
+                          <Radio style={radioStyle} value={4}>
+                            Depart - Today
+                          </Radio>
+                        </RadioGroup>
+                      </Card>
+                    </Col>
+                    <Col span={8}>
+                      <Card title="Main Reservation" bordered={false}>
+                        Card content
+                      </Card>
+                    </Col>
+                  </Row>
+                </div>
+              </React.Fragment>
+            );
+          } else if (formReservasi) {
+            return (
+              <div>
+                <FormResNumber
+                  URL={URL}
+                  reservation_number={reservation_number}
+                  dataReservation={dataReservation}
+                  style={{ marginTop: 10 }}
+                />
+              </div>
+            );
           }
-          //  else if (!tabelUtama && tabel360) {
-          //   return (
-          //     <div>
-          //       <Button
-          //         onClick={this.onResetTable.bind()}
-          //         style={{ marginBottom: 10 }}
-          //       >
-          //         Kembali ke Daftar Penilaian
-          //       </Button>
-          //       <Table
-          //         columns={columnDetail}
-          //         dataSource={dataDetail}
-          //         onChange={this.handleChange}
-          //         rowKey="nip_nim"
-          //       />
-          //     </div>
-          //   );
-          // } else if (!tabelUtama && tabelSaw) {
-          //   return (
-          //     <div>
-          //       <Button
-          //         onClick={this.onResetTable.bind()}
-          //         style={{ marginBottom: 10 }}
-          //       >
-          //         Kembali ke Daftar Penilaian
-          //       </Button>
-          //       <Table
-          //         columns={columnSaw}
-          //         dataSource={dataSawDetail}
-          //         onChange={this.handleChange}
-          //         rowKey="nip_nim"
-          //       />
-          //     </div>
-          //   );
-          // }
         })()}
       </div>
     );
